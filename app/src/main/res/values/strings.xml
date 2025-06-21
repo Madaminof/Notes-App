@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Notes</string>
+
+    <string name="Bosh_sahifa">Bosh sahifa</string>
+    <string name="Calendar">Calendar</string>
+    <string name="Yakunlangan">Yakunlangan</string>
+    <string name="Statistika">Statistika</string>
+    <string name="Sozlamalar">Sozlamalar</string>
+    <string name="Chiqish">Chiqish</string>
+    <string name="Ismingiz">Ismingiz</string>
+    <string name="email.com">email.@email.com</string>
+    <string name="User_Profile">User Profile</string>
+
+    <string name="TodoList">Notes</string>
+    <string name="Menu">Menu</string>
+    <string name="Notifications">Notifications</string>
+    <string name="Search">Search</string>
+
+
+
+
+
+
+</resources>
