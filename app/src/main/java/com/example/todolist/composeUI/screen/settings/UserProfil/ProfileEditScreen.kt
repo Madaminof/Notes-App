@@ -83,7 +83,7 @@ fun ProfileEditScreen(
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF1976D2))
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF5886B4))
             )
         }
     ) { padding ->
