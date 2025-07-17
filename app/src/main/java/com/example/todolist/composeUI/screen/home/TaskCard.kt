@@ -27,11 +27,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.todolist.data.Task
+import com.example.todolist.ui.theme.blue
+import com.example.todolist.ui.theme.green
+import com.example.todolist.ui.theme.orange
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -40,29 +43,53 @@ import java.util.Locale
 fun TaskCard(
     task: Task,
     onDelete: () -> Unit,
-    onEdit: (Task) -> Unit, // ✅ Bu yerda Task beriladi
+    onEdit: (Task) -> Unit,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val formattedDate = rememberFormattedDate(task.date)
     var menuExpanded by remember { mutableStateOf(false) }
 
-    val (backgroundColor, badge, badgeColor) = when {
-        task.isEdited -> Triple(Color(0xFFFFF8E1), "✏️ Tahrirlangan", Color(0xFFFFA000))
-        isToday(task.date) -> Triple(Color(0xFFE3F2FD), "🕒 Bugun", Color(0xFF448AFF))
-        isWithinAWeek(task.date) -> Triple(Color(0xFFCDF3DD), "📅 Haftalik", Color(0xFF4CAF50))
-        else -> Triple(Color.White, "🗂 Eski", Color.Gray)
+    val colorScheme = MaterialTheme.colorScheme
+
+    val (backgroundColor, badgeText, badgeColor) = when {
+        task.isEdited -> Triple(
+            MaterialTheme.colorScheme.tertiary,           // 📌 custom color from Color.kt
+            "✏️ Tahrirlangan",
+            orange
+        )
+
+        isToday(task.date) -> Triple(
+            MaterialTheme.colorScheme.primary,
+            "🕒 Bugun",
+            blue
+        )
+
+        isWithinAWeek(task.date) -> Triple(
+            MaterialTheme.colorScheme.secondary,
+            "📅 Haftalik",
+            green
+        )
+
+        else -> Triple(
+            colorScheme.surface,
+            "🗂 Eski",
+            colorScheme.outline
+        )
     }
 
     Surface(
-        modifier = modifier.clickable { onClick() },
+        modifier = modifier
+            .clickable { onClick() },
         shape = RoundedCornerShape(16.dp),
         color = backgroundColor,
         tonalElevation = 2.dp,
         shadowElevation = 2.dp,
-        border = BorderStroke(1.dp, Color(0xFFE0E0E0))
+        border = BorderStroke(1.dp, colorScheme.outline.copy(alpha = 0.2f))
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
+
+            // 🔝 Title + Menu
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -71,34 +98,46 @@ fun TaskCard(
                 Text(
                     text = task.title,
                     style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color.Black
+                        fontSize = 20.sp,                        // kattaroq matn
+                        fontWeight = FontWeight.SemiBold,        // yarim qalin
+                        lineHeight = 26.sp,                      // qulay o'qish uchun oraliq
+                        letterSpacing = 0.1.sp,                  // ozgina harf oraliq
+                        color = MaterialTheme.colorScheme.onBackground
                     ),
-                    modifier = Modifier.weight(1f)
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,            // juda uzun bo‘lsa "..." bilan kesiladi
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(vertical = 4.dp)
                 )
+
 
                 Box {
                     IconButton(onClick = { menuExpanded = true }) {
                         Icon(
                             imageVector = Icons.Default.MoreVert,
                             contentDescription = "Ko‘proq",
-                            tint = Color.Gray
+                            tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
 
                     DropdownMenu(
                         expanded = menuExpanded,
                         onDismissRequest = { menuExpanded = false }
+
                     ) {
                         DropdownMenuItem(
                             text = { Text("Tahrirlash") },
                             onClick = {
                                 menuExpanded = false
-                                onEdit(task) // ✅ TASK NI UZATISH
+                                onEdit(task)
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("O‘chirish") },
+                            text = { Text(
+                                "O‘chirish",
+                                color = MaterialTheme.colorScheme.error
+                            ) },
                             onClick = {
                                 menuExpanded = false
                                 onDelete()
@@ -106,36 +145,46 @@ fun TaskCard(
                         )
                     }
                 }
+
             }
 
+            // 📝 Description
             if (task.description.isNotBlank()) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = task.description,
-                    style = MaterialTheme.typography.bodySmall.copy(color = Color.DarkGray),
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        color = MaterialTheme.colorScheme.onBackground
+                    ),
                     maxLines = 5,
                     overflow = TextOverflow.Ellipsis
                 )
             }
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.padding(6.dp))
 
+            // 📅 Sana + Badge
             Column {
                 Text(
                     text = formattedDate,
                     style = MaterialTheme.typography.labelSmall,
-                    color = Color.Gray
+                    color = colorScheme.onSurfaceVariant
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = badge,
-                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Medium),
+                    text = badgeText,
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontWeight = FontWeight.Medium
+                    ),
                     color = badgeColor
                 )
             }
         }
     }
 }
+
+
+
 
 
 @Composable

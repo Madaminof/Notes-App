@@ -21,10 +21,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -38,7 +41,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -47,16 +49,16 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.todolist.composeUI.navigation.Routes
 import com.example.todolist.data.UserData.model.UserProfile
+import com.example.todolist.ui.theme.BrandColor
 import java.io.File
 import java.io.FileOutputStream
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileEditScreen(
     viewModel: UserProfileViewModel = hiltViewModel(),
     onBack: () -> Unit,
-    navController: NavController, // 🔄 navController qabul qilish
+    navController: NavController
 ) {
     val profile by viewModel.profile.collectAsState()
     var name by remember { mutableStateOf(profile.name) }
@@ -68,7 +70,6 @@ fun ProfileEditScreen(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
-            // Faylga saqlash va path ni olish
             val savedPath = saveImageToInternalStorage(context, it)
             if (savedPath != null) avatarUri = savedPath
         }
@@ -77,13 +78,24 @@ fun ProfileEditScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Profilni tahrirlash", color = Color.White) },
+                title = {
+                    Text(
+                        "Profilni tahrirlash",
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = "Back",
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF5886B4))
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = BrandColor // 💠 BrandColor bilan Theme orqali
+                )
             )
         }
     ) { padding ->
@@ -95,24 +107,29 @@ fun ProfileEditScreen(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // 🔳 Avatar
+            // 🖼 Avatar
             Box(
                 modifier = Modifier
                     .size(100.dp)
                     .clip(CircleShape)
-                    .background(Color.LightGray)
+                    .background(MaterialTheme.colorScheme.primary)
                     .clickable { launcher.launch("image/*") },
                 contentAlignment = Alignment.Center
             ) {
                 if (avatarUri.isNotBlank()) {
                     AsyncImage(
-                        model = File(avatarUri), // ⬅️ Fayldan o‘qiyapmiz
+                        model = File(avatarUri),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
                     )
                 } else {
-                    Icon(Icons.Default.Person, contentDescription = null, tint = Color.White, modifier = Modifier.size(48.dp))
+                    Icon(
+                        Icons.Default.Person,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(48.dp)
+                    )
                 }
             }
 
@@ -121,8 +138,13 @@ fun ProfileEditScreen(
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
-                label = { Text("Ismingiz") },
-                modifier = Modifier.fillMaxWidth()
+                label = { Text(text = "Ismingiz", color = BrandColor) },
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = BrandColor,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                    cursorColor = BrandColor
+                )
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -130,8 +152,13 @@ fun ProfileEditScreen(
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = { Text("Email") },
-                modifier = Modifier.fillMaxWidth()
+                label = { Text(text = "Email", color = BrandColor) },
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = BrandColor,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                    cursorColor = BrandColor
+                )
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -142,18 +169,23 @@ fun ProfileEditScreen(
                         UserProfile(name, email, avatarUri)
                     )
                     Toast.makeText(context, "Saqlandi ✅", Toast.LENGTH_SHORT).show()
-                    // 🔄 Asosiy sahifaga o'tish
                     navController.navigate(Routes.HOME) {
-                        popUpTo(0) { inclusive = true } // backstack tozalansin
+                        popUpTo(0) { inclusive = true }
                     }
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = BrandColor,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                )
             ) {
                 Text("Saqlash")
             }
         }
     }
 }
+
+
 
 fun saveImageToInternalStorage(context: Context, uri: Uri): String? {
     return try {

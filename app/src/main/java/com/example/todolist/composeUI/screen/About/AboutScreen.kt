@@ -21,16 +21,14 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import com.example.todolist.ui.theme.BrandColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen(
-    navController: NavController,
-    onMenuClick: () -> Unit // ⬅️ Drawer menyu tugmasi uchun parametr qo‘shildi
+    onMenuClick: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -39,26 +37,27 @@ fun AboutScreen(
                     Text(
                         text = "Ilova haqida",
                         style = MaterialTheme.typography.titleLarge.copy(
-                            color = Color.White
+                            color = MaterialTheme.colorScheme.onPrimary
                         )
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { onMenuClick() }) { // ⬅️ Drawer menyu tugmasi
+                    IconButton(onClick = onMenuClick) {
                         Icon(
                             imageVector = Icons.Default.Menu,
                             contentDescription = "Menyu",
-                            tint = Color.White
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF5886B4) // Ko‘k header
+                    containerColor = BrandColor
                 )
             )
         },
-        containerColor = MaterialTheme.colorScheme.surface
+        containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -67,9 +66,10 @@ fun AboutScreen(
             contentAlignment = Alignment.Center
         ) {
             Surface(
+                modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium,
-                tonalElevation = 4.dp,
-                modifier = Modifier.fillMaxWidth()
+                tonalElevation = 3.dp,
+                color = MaterialTheme.colorScheme.primary // oqga yaqin fon (Color.kt dan)
             ) {
                 Column(
                     modifier = Modifier.padding(24.dp),
@@ -77,14 +77,18 @@ fun AboutScreen(
                 ) {
                     Text(
                         text = "📋 ToDoList Ilovasi",
-                        style = MaterialTheme.typography.headlineSmall.copy(fontSize = 24.sp)
+                        style = MaterialTheme.typography.headlineSmall.copy(
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
                         text = "Ushbu ilova yordamida siz kundalik vazifalaringizni rejalashtirishingiz, eslatmalar yaratishingiz va samarali ishlashingiz mumkin.",
-                        style = MaterialTheme.typography.bodyMedium.copy(color = Color.DarkGray),
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        ),
                         lineHeight = 20.sp
                     )
 
@@ -92,7 +96,9 @@ fun AboutScreen(
 
                     Text(
                         text = "Versiya: 1.0.0",
-                        style = MaterialTheme.typography.labelMedium.copy(color = Color.Gray)
+                        style = MaterialTheme.typography.labelMedium.copy(
+                            color = MaterialTheme.colorScheme.outline
+                        )
                     )
                 }
             }

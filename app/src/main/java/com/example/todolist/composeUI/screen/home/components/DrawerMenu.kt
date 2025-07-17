@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.todolist.composeUI.navigation.Routes
 import com.example.todolist.composeUI.screen.settings.UserProfil.UserProfileViewModel
 
@@ -49,14 +50,13 @@ fun DrawerMenu(
         modifier = Modifier
             .width(280.dp)
             .padding(end = 8.dp),
-        drawerContainerColor = Color(0xFFF7F7F7)
+        drawerContainerColor = MaterialTheme.colorScheme.background // ✅ Light theme
     ) {
         Spacer(modifier = Modifier.height(24.dp))
 
-        // 🔹 Profil qismi
         Column(modifier = Modifier.padding(horizontal = 20.dp)) {
             if (profile.avatarUri.isNotBlank()) {
-                coil.compose.AsyncImage(
+                AsyncImage(
                     model = profile.avatarUri,
                     contentDescription = null,
                     modifier = Modifier
@@ -68,7 +68,7 @@ fun DrawerMenu(
                 Icon(
                     imageVector = Icons.Default.Person,
                     contentDescription = null,
-                    tint = Color(0xFF448AFF),
+                    tint = Color(0xFF2196F3), // ✅ Blue
                     modifier = Modifier.size(56.dp)
                 )
             }
@@ -79,27 +79,28 @@ fun DrawerMenu(
                 text = profile.name.ifBlank { "Foydalanuvchi" },
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.SemiBold,
-                    color = Color.Black
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             )
 
             Text(
                 text = profile.email.ifBlank { "email@example.com" },
-                style = MaterialTheme.typography.bodySmall.copy(color = Color.Gray)
+                style = MaterialTheme.typography.bodySmall.copy(
+                    color = Color.Gray
+                )
             )
         }
 
         Spacer(modifier = Modifier.height(20.dp))
-        Divider(color = Color.LightGray)
+        Divider(color = Color.LightGray.copy(alpha = 0.5f))
         Spacer(modifier = Modifier.height(8.dp))
 
-        // 🔹 Menu elementlari
         DrawerItem("Bosh sahifa", Icons.Default.Home, Routes.HOME, navController, onItemClick)
-        DrawerItem("Kalendar", Icons.Default.DateRange,Routes.CALENDAR,navController,onItemClick)
+        DrawerItem("Kalendar", Icons.Default.DateRange, Routes.CALENDAR, navController, onItemClick)
         DrawerItem("Eslatmalar", Icons.Default.Notifications, Routes.REMINDERS, navController, onItemClick)
 
         Spacer(modifier = Modifier.height(16.dp))
-        Divider(color = Color.LightGray)
+        Divider(color = Color.LightGray.copy(alpha = 0.5f))
         Spacer(modifier = Modifier.height(8.dp))
 
         DrawerItem("Sozlamalar", Icons.Default.Settings, Routes.SETTINGS, navController, onItemClick)
@@ -107,7 +108,6 @@ fun DrawerMenu(
         DrawerItem("Chiqish", Icons.Default.ExitToApp, Routes.LOGOUT, navController, onItemClick)
     }
 }
-
 
 @Composable
 fun DrawerItem(
@@ -125,7 +125,8 @@ fun DrawerItem(
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyMedium.copy(
-                    fontWeight = if (selected) FontWeight.Medium else FontWeight.Normal
+                    fontWeight = if (selected) FontWeight.Medium else FontWeight.Normal,
+                    color = if (selected) Color(0xFF2196F3) else MaterialTheme.colorScheme.onBackground
                 )
             )
         },
@@ -133,7 +134,7 @@ fun DrawerItem(
             Icon(
                 imageVector = icon,
                 contentDescription = title,
-                tint = if (selected) Color(0xFF448AFF) else Color.Gray
+                tint = if (selected) Color(0xFF2196F3) else Color.Gray
             )
         },
         selected = selected,
@@ -147,10 +148,10 @@ fun DrawerItem(
         },
         modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
         colors = NavigationDrawerItemDefaults.colors(
-            selectedContainerColor = Color(0xFFE3F2FD),
+            selectedContainerColor = Color(0xFF2196F3).copy(alpha = 0.1f),
             unselectedContainerColor = Color.Transparent,
-            selectedIconColor = Color(0xFF448AFF),
-            selectedTextColor = Color(0xFF448AFF)
+            selectedIconColor = Color(0xFF2196F3),
+            selectedTextColor = Color(0xFF2196F3)
         )
     )
 }

@@ -3,9 +3,15 @@ package com.example.todolist.composeUI.screen.Exit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import com.example.todolist.composeUI.navigation.Routes
+
 
 @Composable
 fun LogoutScreen(navController: NavController) {
@@ -34,7 +40,7 @@ fun LogoutScreen(navController: NavController) {
                         }
                     }
                 ) {
-                    Text("Ha")
+                    Text("Ha",color = Color.Black)
                 }
             },
             dismissButton = {
@@ -42,7 +48,7 @@ fun LogoutScreen(navController: NavController) {
                     showDialog = false
                     navController.popBackStack()
                 }) {
-                    Text("Yo‘q")
+                    Text("Yo‘q",color = Color.Black)
                 }
             }
         )

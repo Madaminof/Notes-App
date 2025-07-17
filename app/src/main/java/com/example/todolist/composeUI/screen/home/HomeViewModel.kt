@@ -11,12 +11,15 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-open class HomeViewModel @Inject constructor(
+class HomeViewModel @Inject constructor(
     private val repository: TaskRepository
 ) : ViewModel() {
 
     private val _tasks = MutableStateFlow<List<Task>>(emptyList())
     val tasks: StateFlow<List<Task>> = _tasks
+
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading: StateFlow<Boolean> = _isLoading
 
     init {
         loadTasks()
@@ -24,33 +27,28 @@ open class HomeViewModel @Inject constructor(
 
     fun loadTasks() {
         viewModelScope.launch {
+            _isLoading.value = true
             repository.getAllTasks().collect { taskList ->
                 _tasks.value = taskList
+                _isLoading.value = false
             }
         }
     }
 
     fun deleteTask(task: Task) {
         viewModelScope.launch {
+            _isLoading.value = true
             repository.deleteTask(task)
             loadTasks()
         }
     }
 
-    fun addTask(task: Task) {
-        viewModelScope.launch {
-            repository.insertTask(task)
-            loadTasks()
-        }
-    }
+
     fun updateTask(task: Task) {
         viewModelScope.launch {
+            _isLoading.value = true
             repository.updateTask(task)
             loadTasks()
         }
     }
-
-
 }
-
-

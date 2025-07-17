@@ -1,15 +1,20 @@
 package com.example.todolist.composeUI.screen.Calendar
 
 import android.content.Context
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Dehaze
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,11 +42,13 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.todolist.composeUI.screen.home.HomeViewModel
 import com.example.todolist.composeUI.screen.home.components.DrawerMenu
+import com.example.todolist.ui.theme.BrandColor
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,11 +60,7 @@ fun CalendarScreen(
     var selectedDate by remember { mutableStateOf(currentDate()) }
 
     val tasks by viewModel.tasks.collectAsState()
-
-    // ✅ Formatlarni to‘g‘ri taqqoslaymiz
-    val filteredTasks = tasks.filter {
-        formatDate(it.date) == selectedDate
-    }
+    val filteredTasks = tasks.filter { formatDate(it.date) == selectedDate }
 
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -79,7 +82,7 @@ fun CalendarScreen(
                     title = {
                         Text(
                             text = "Kalendar",
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.onPrimary,
                             style = MaterialTheme.typography.titleLarge
                         )
                     },
@@ -87,7 +90,11 @@ fun CalendarScreen(
                         IconButton(onClick = {
                             scope.launch { drawerState.open() }
                         }) {
-                            Icon(Icons.Default.Dehaze, contentDescription = "Menu", tint = Color.White)
+                            Icon(
+                                imageVector = Icons.Default.Dehaze,
+                                contentDescription = "Menu",
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
                         }
                     },
                     actions = {
@@ -96,48 +103,101 @@ fun CalendarScreen(
                                 selectedDate = pickedDate
                             }
                         }) {
-                            Icon(Icons.Default.CalendarToday, contentDescription = "Sana tanlash", tint = Color.White)
+                            Icon(
+                                imageVector = Icons.Default.CalendarToday,
+                                contentDescription = "Sana tanlash",
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
                         }
                     },
-                    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF5886B4))
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = BrandColor
+                    )
                 )
             },
-            containerColor = Color(0xFFF7F7F7)
+            containerColor = MaterialTheme.colorScheme.background
         ) { padding ->
-            Column(
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .padding(16.dp)
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
-                Text(
-                    text = "Tanlangan sana: $selectedDate",
-                    style = MaterialTheme.typography.labelLarge,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
+                item {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Tanlangan sana: $selectedDate",
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                    }
+                }
 
                 if (filteredTasks.isEmpty()) {
-                    Text(
-                        "Ushbu sanada hech qanday vazifa yo'q.",
-                        style = MaterialTheme.typography.bodyLarge
-                    )
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.CalendarToday,
+                                contentDescription = null,
+                                tint = Color.Gray,
+                                modifier = Modifier.size(48.dp)
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                "Ushbu sanada hech qanday vazifa yo'q.",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = Color.Gray
+                            )
+                        }
+                    }
                 } else {
-                    filteredTasks.forEach { task ->
+                    items(filteredTasks) { task ->
                         ElevatedCard(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 4.dp),
+                                .height(120.dp) // Barcha itemlar bir xil bo‘yda
+                                .padding(vertical = 4.dp)
+                                .background(MaterialTheme.colorScheme.background),
                             onClick = {
                                 navController.navigate("task_detail/${task.id}")
-                            }
+                            },
+                            colors = CardDefaults.elevatedCardColors(
+                                containerColor = MaterialTheme.colorScheme.primary // YOKI siz istagan rang
+                            )
                         ) {
-                            Column(modifier = Modifier.padding(16.dp)) {
-                                Text(task.title, style = MaterialTheme.typography.titleMedium)
-                                if (task.description.isNotBlank()) {
-                                    Text(task.description, style = MaterialTheme.typography.bodyMedium)
-                                }
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(16.dp)
+                            ) {
+                                Text(
+                                    text = task.title,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    maxLines = 1,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = task.description,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = Color.Gray,
+                                    maxLines = 2
+                                )
+                                Spacer(modifier = Modifier.weight(1f))
+                                Text(
+                                    text = "📅 ${formatDate(task.date)}",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = BrandColor
+                                )
                             }
                         }
                     }
@@ -146,6 +206,8 @@ fun CalendarScreen(
         }
     }
 }
+
+
 
 
 fun currentDate(): String {

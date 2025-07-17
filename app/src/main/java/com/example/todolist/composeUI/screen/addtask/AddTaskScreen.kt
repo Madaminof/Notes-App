@@ -27,10 +27,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.todolist.ui.theme.BrandColor
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,7 +51,7 @@ fun AddTaskScreen(
                         text = "Yangi vazifa",
                         style = MaterialTheme.typography.headlineSmall.copy(
                             fontWeight = FontWeight.SemiBold,
-                            color = Color.White
+                            color = MaterialTheme.colorScheme.onPrimary
                         )
                     )
                 },
@@ -59,16 +60,16 @@ fun AddTaskScreen(
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Orqaga",
-                            tint = Color.White
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF5886B4)
+                    containerColor = BrandColor
                 )
             )
         },
-        containerColor = Color(0xFFF7F7F7)
+        containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
 
         Column(
@@ -78,39 +79,49 @@ fun AddTaskScreen(
                 .padding(horizontal = 24.dp, vertical = 16.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
+
             Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
-                    label = { Text("Sarlavha") },
+                    label = { Text(text = "Sarlavha", color = BrandColor) },
                     placeholder = { Text("Masalan: Kitob o‘qish") },
                     singleLine = true,
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color(0xFF448AFF),
-                        unfocusedBorderColor = Color.LightGray,
-                        cursorColor = Color.Black,
-                        focusedLabelColor = Color(0xFF448AFF),
-                        unfocusedLabelColor = Color.Gray
+                        focusedBorderColor = BrandColor,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                        cursorColor = BrandColor,
+                        focusedLabelColor = BrandColor,
+                        unfocusedLabelColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                        focusedContainerColor = MaterialTheme.colorScheme.background,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.background,
+                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                     )
                 )
 
                 OutlinedTextField(
                     value = description,
                     onValueChange = { description = it },
-                    label = { Text("Tavsif") },
+                    label = { Text(text = "Tavsif", color = BrandColor) },
                     placeholder = { Text("Batafsil vazifa tavsifi...") },
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(150.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color(0xFF448AFF),
-                        unfocusedBorderColor = Color.LightGray,
-                        cursorColor = Color.Black,
-                        focusedLabelColor = Color(0xFF448AFF),
-                        unfocusedLabelColor = Color.Gray
+                        focusedBorderColor = BrandColor,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                        cursorColor = BrandColor,
+                        focusedLabelColor = BrandColor,
+                        unfocusedLabelColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                        focusedContainerColor = MaterialTheme.colorScheme.background,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.background,
+                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                     )
                 )
             }
@@ -127,8 +138,8 @@ fun AddTaskScreen(
                     .height(54.dp),
                 shape = RoundedCornerShape(28.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF448AFF),
-                    contentColor = Color.White
+                    containerColor = BrandColor,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
                 )
             ) {
                 Text(
@@ -139,3 +150,4 @@ fun AddTaskScreen(
         }
     }
 }
+

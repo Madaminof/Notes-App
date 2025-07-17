@@ -1,11 +1,9 @@
 package com.example.todolist.di
 
 import android.app.Application
-import android.content.Context
 import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.example.todolist.composeUI.screen.settings.DarkMode.ThemePreferenceManager
 import com.example.todolist.data.ReminderDao
 import com.example.todolist.data.TaskDao
 import com.example.todolist.data.TaskDatabase
@@ -14,7 +12,6 @@ import com.example.todolist.repository.TaskRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -56,7 +53,7 @@ object AppModule {
             TaskDatabase::class.java,
             "task_db"
         )
-            .addMigrations(MIGRATION_3_4, MIGRATION_4_5) // ✅ Ikkala migratsiya qo‘shildi
+            .addMigrations(MIGRATION_3_4, MIGRATION_4_5)
             .build()
     }
 
@@ -74,17 +71,6 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideReminderRepository(reminderDao: ReminderDao): ReminderRepository = ReminderRepository(reminderDao)
-
-
-
-
-    @Provides
-    @Singleton
-    fun provideThemePreferenceManager(
-        @ApplicationContext context: Context
-    ): ThemePreferenceManager {
-        return ThemePreferenceManager(context)
-    }
-
+    fun provideReminderRepository(reminderDao: ReminderDao): ReminderRepository =
+        ReminderRepository(reminderDao)
 }

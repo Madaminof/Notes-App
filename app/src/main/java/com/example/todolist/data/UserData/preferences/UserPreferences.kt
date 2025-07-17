@@ -3,18 +3,19 @@ package com.example.todolist.data.UserData.preferences
 import android.content.Context
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.example.todolist.composeUI.screen.settings.DarkMode.dataStore
+import androidx.datastore.preferences.preferencesDataStore
 import com.example.todolist.data.UserData.model.UserProfile
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
+private val Context.userDataStore by preferencesDataStore(name = "user_prefs")
 
 class UserPreferences @Inject constructor(
     @ApplicationContext context: Context
 ) {
-    private val dataStore = context.dataStore
+    private val dataStore = context.userDataStore
 
     private val NAME_KEY = stringPreferencesKey("name")
     private val EMAIL_KEY = stringPreferencesKey("email")
@@ -35,9 +36,8 @@ class UserPreferences @Inject constructor(
             preferences[AVATAR_URI_KEY] = profile.avatarUri
         }
     }
-    // UserPreferences.kt
+
     suspend fun clearUserData() {
         dataStore.edit { it.clear() }
     }
-
 }

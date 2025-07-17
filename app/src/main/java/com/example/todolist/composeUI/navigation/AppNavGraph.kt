@@ -13,6 +13,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.todolist.SplashScreen
 import com.example.todolist.composeUI.screen.About.AboutScreen
 import com.example.todolist.composeUI.screen.Calendar.CalendarScreen
 import com.example.todolist.composeUI.screen.Details.TaskDetailScreen
@@ -23,10 +24,13 @@ import com.example.todolist.composeUI.screen.home.HomeScreen
 import com.example.todolist.composeUI.screen.home.HomeViewModel
 import com.example.todolist.composeUI.screen.home.components.DrawerMenu
 import com.example.todolist.composeUI.screen.settings.SettingsScreen
+import com.example.todolist.composeUI.screen.settings.SettingsViewModel
 import com.example.todolist.composeUI.screen.settings.UserProfil.ProfileEditScreen
 import kotlinx.coroutines.launch
 
+
 object Routes {
+    const val SPLASH = "splash"
     const val HOME = "home"
     const val ADD_TASK = "add_task"
     const val CALENDAR = "calendar"
@@ -37,16 +41,22 @@ object Routes {
     const val EDIT_PROFILE = "profile_edit"
 
 }
-@Composable
-fun AppNavGraph(navController: NavHostController) {
 
+@Composable
+fun AppNavGraph(
+    navController: NavHostController,
+    settingsViewModel: SettingsViewModel // ✅ ViewModel parametr qilib olindi
+) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
     NavHost(
         navController = navController,
-        startDestination = Routes.HOME
+        startDestination = Routes.SPLASH
     ) {
+
+        composable("splash") { SplashScreen(navController) }
+
         composable(Routes.HOME) {
             HomeScreen(
                 onNavigateToAddTask = { navController.navigate(Routes.ADD_TASK) },
@@ -62,23 +72,25 @@ fun AppNavGraph(navController: NavHostController) {
         }
 
         composable(Routes.SETTINGS) {
-            val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-            val scope = rememberCoroutineScope()
+            // Har bir drawer uchun alohida state
+            val localDrawerState = rememberDrawerState(DrawerValue.Closed)
+            val localScope = rememberCoroutineScope()
 
             ModalNavigationDrawer(
-                drawerState = drawerState,
+                drawerState = localDrawerState,
                 drawerContent = {
                     DrawerMenu(
                         navController = navController,
                         onItemClick = {
-                            scope.launch { drawerState.close() }
+                            localScope.launch { localDrawerState.close() }
                         }
                     )
                 }
             ) {
                 SettingsScreen(
-                    navController = navController, // 🔧 Qo‘shildi
-                    onMenuClick = { scope.launch { drawerState.open() } }
+                    navController = navController,
+                    onMenuClick = { localScope.launch { localDrawerState.open() } },
+                    viewModel = settingsViewModel // ✅ ViewModel uzatildi
                 )
             }
         }
@@ -96,14 +108,10 @@ fun AppNavGraph(navController: NavHostController) {
                 }
             ) {
                 AboutScreen(
-                    navController = navController,
-                    onMenuClick = {
-                        scope.launch { drawerState.open() }
-                    }
+                    onMenuClick = { scope.launch { drawerState.open() } }
                 )
             }
         }
-
 
         composable(Routes.LOGOUT) {
             LogoutScreen(navController = navController)
@@ -112,8 +120,6 @@ fun AppNavGraph(navController: NavHostController) {
         composable(Routes.CALENDAR) {
             CalendarScreen(viewModel = hiltViewModel(), navController = navController)
         }
-
-
 
         composable(Routes.REMINDERS) {
             RemindersScreen(navController = navController)
@@ -125,8 +131,6 @@ fun AppNavGraph(navController: NavHostController) {
                 onBack = { navController.popBackStack() }
             )
         }
-
-
 
         composable(
             route = "task_detail/{taskId}",
@@ -142,7 +146,6 @@ fun AppNavGraph(navController: NavHostController) {
                 Text("Task topilmadi")
             }
         }
-
-        // Qo‘shimcha route'lar shu yerga qo‘shilishi mumkin
     }
 }
+

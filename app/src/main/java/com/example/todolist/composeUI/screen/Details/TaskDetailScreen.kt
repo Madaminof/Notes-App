@@ -4,7 +4,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
@@ -25,16 +27,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.todolist.composeUI.screen.EditScreen.TaskEditDialog
 import com.example.todolist.composeUI.screen.home.HomeViewModel
 import com.example.todolist.data.Task
+import com.example.todolist.ui.theme.BrandColor
+import com.example.todolist.ui.theme.orange
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskDetailScreen(
@@ -62,7 +68,7 @@ fun TaskDetailScreen(
                     Text(
                         text = "Vazifa tafsilotlari",
                         style = MaterialTheme.typography.headlineSmall.copy(
-                            color = Color.White, // ✅ Oq matn
+                            color = MaterialTheme.colorScheme.onPrimary,
                             fontWeight = FontWeight.SemiBold
                         )
                     )
@@ -71,8 +77,8 @@ fun TaskDetailScreen(
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back",
-                            tint = Color.White // ✅ Oq ikon
+                            contentDescription = "Orqaga",
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                 },
@@ -80,8 +86,8 @@ fun TaskDetailScreen(
                     IconButton(onClick = { showDialog = true }) {
                         Icon(
                             imageVector = Icons.Default.Edit,
-                            contentDescription = "Edit",
-                            tint = Color.White // ✅ Oq ikon
+                            contentDescription = "Tahrirlash",
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                     IconButton(onClick = {
@@ -90,68 +96,69 @@ fun TaskDetailScreen(
                     }) {
                         Icon(
                             imageVector = Icons.Default.Delete,
-                            contentDescription = "Delete",
-                            tint = Color.White // ✅ Oq ikon
+                            contentDescription = "O‘chirish",
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF5886B4) // ✅ Telegram-style moviy fon
+                    containerColor = BrandColor
                 )
             )
         },
-        containerColor = Color(0xFFF7F7F7)
+        containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
-        Column(
+
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            tonalElevation = 3.dp,
+            shadowElevation = 2.dp,
+            color = MaterialTheme.colorScheme.background,
             modifier = Modifier
                 .padding(padding)
-                .padding(16.dp)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.Top
+                .padding(horizontal = 16.dp, vertical = 12.dp)
+                .fillMaxSize()
         ) {
-            Surface(
-                shape = RoundedCornerShape(16.dp),
-                tonalElevation = 4.dp,
-                shadowElevation = 4.dp,
-                modifier = Modifier.fillMaxSize()
+            Column(
+                modifier = Modifier
+                    .padding(20.dp)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Column(
-                    modifier = Modifier.padding(24.dp),
-                    verticalArrangement = Arrangement.spacedBy(20.dp)
-                ) {
+                Text(
+                    text = task.title,
+                    style = MaterialTheme.typography.headlineSmall.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                )
+
+                if (task.description.isNotBlank()) {
                     Text(
-                        text = task.title,
-                        style = MaterialTheme.typography.headlineMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                            color = Color.Black
+                        text = task.description,
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            lineHeight = 22.sp
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+
+                Divider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))
+
+                Text(
+                    text = "📅 Yaratilgan sana: ${formatDate(task.date)}",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                )
+
+                if (task.isEdited) {
+                    Text(
+                        text = "✏️ Ushbu vazifa tahrirlangan",
+                        style = MaterialTheme.typography.labelMedium.copy(
+                            fontWeight = FontWeight.Medium,
+                            color = orange // oldingi: Color(0xFFF57C00)
                         )
                     )
-
-                    if (task.description.isNotBlank()) {
-                        Text(
-                            text = task.description,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = Color.DarkGray
-                        )
-                    }
-
-                    Divider(color = Color.LightGray)
-
-                    Text(
-                        text = "Created: ${formatDate(task.date)}",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = Color.Gray
-                    )
-
-                    if (task.isEdited) {
-                        Text(
-                            text = "✏️ Tahrirlangan",
-                            style = MaterialTheme.typography.labelMedium.copy(
-                                fontWeight = FontWeight.Medium
-                            ),
-                            color = Color(0xFFF57C00)
-                        )
-                    }
                 }
             }
         }
