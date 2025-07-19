@@ -1,5 +1,9 @@
 package com.example.todolist.composeUI.screen.home
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,6 +44,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -57,6 +62,7 @@ import com.example.todolist.composeUI.screen.home.components.DrawerMenu
 import com.example.todolist.data.Task
 import com.example.todolist.ui.theme.BrandColor
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -131,6 +137,16 @@ fun HomeScreen(
                             it.description.contains(searchQuery, ignoreCase = true)
                 }
 
+                val animatedItems = remember { mutableStateListOf<Int>() }
+
+                LaunchedEffect(filteredList) {
+                    animatedItems.clear()
+                    filteredList.forEachIndexed { index, task ->
+                        delay(index * 80L) // har bir itemni chiqish oralig‘i 100ms
+                        animatedItems.add(task.id)
+                    }
+                }
+
                 LazyVerticalStaggeredGrid(
                     columns = StaggeredGridCells.Fixed(2),
                     contentPadding = PaddingValues(16.dp),
@@ -142,13 +158,24 @@ fun HomeScreen(
                         .background(colorScheme.background)
                         .nestedScroll(scrollBehavior.nestedScrollConnection)
                 ) {
-                    items(filteredList) { task ->
-                        TaskCard(
-                            task = task,
-                            onClick = { navController.navigate("task_detail/${task.id}") },
-                            onDelete = { viewModel.deleteTask(task) },
-                            onEdit = { taskToEdit = it }
-                        )
+                    items(filteredList, key = { it.id }) { task ->
+                        val visible = animatedItems.contains(task.id)
+                        AnimatedVisibility(
+                            visible = visible,
+                            enter = fadeIn(animationSpec = tween(300)) +
+                                    scaleIn(
+                                        initialScale = 0.8f,
+                                        animationSpec = tween(300)
+                                    )
+
+                        ) {
+                            TaskCard(
+                                task = task,
+                                onClick = { navController.navigate("task_detail/${task.id}") },
+                                onDelete = { viewModel.deleteTask(task) },
+                                onEdit = { taskToEdit = it }
+                            )
+                        }
                     }
                 }
 
@@ -238,8 +265,8 @@ fun LargeTopAppBarWithSearch(
                 unfocusedBorderColor = colorScheme.outline,
                 focusedBorderColor = BrandColor,
                 cursorColor = BrandColor,
-                focusedTextColor = colorScheme.background,
-                unfocusedTextColor = colorScheme.background,
+                focusedTextColor = colorScheme.onBackground,
+                unfocusedTextColor = colorScheme.onBackground,
                 focusedContainerColor = colorScheme.background,
                 unfocusedContainerColor = colorScheme.background
             ),

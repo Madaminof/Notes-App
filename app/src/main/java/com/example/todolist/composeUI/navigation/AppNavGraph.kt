@@ -1,5 +1,13 @@
 package com.example.todolist.composeUI.navigation
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Text
@@ -10,7 +18,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.todolist.SplashScreen
@@ -26,6 +33,7 @@ import com.example.todolist.composeUI.screen.home.components.DrawerMenu
 import com.example.todolist.composeUI.screen.settings.SettingsScreen
 import com.example.todolist.composeUI.screen.settings.SettingsViewModel
 import com.example.todolist.composeUI.screen.settings.UserProfil.ProfileEditScreen
+import com.google.accompanist.navigation.animation.AnimatedNavHost
 import kotlinx.coroutines.launch
 
 
@@ -42,6 +50,7 @@ object Routes {
 
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun AppNavGraph(
     navController: NavHostController,
@@ -50,9 +59,13 @@ fun AppNavGraph(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    NavHost(
+    AnimatedNavHost(
         navController = navController,
-        startDestination = Routes.SPLASH
+        startDestination = Routes.SPLASH,
+        enterTransition = { defaultEnterTransition() },
+        exitTransition = { defaultExitTransition() },
+        popEnterTransition = { defaultPopEnterTransition() },
+        popExitTransition = { defaultPopExitTransition() }
     ) {
 
         composable("splash") { SplashScreen(navController) }
@@ -148,4 +161,26 @@ fun AppNavGraph(
         }
     }
 }
+
+
+@OptIn(ExperimentalAnimationApi::class)
+fun defaultEnterTransition(): EnterTransition =
+    slideInHorizontally(initialOffsetX = { it / 2 }, animationSpec = tween(400)) +
+            fadeIn(animationSpec = tween(400))
+
+@OptIn(ExperimentalAnimationApi::class)
+fun defaultExitTransition(): ExitTransition =
+    slideOutHorizontally(targetOffsetX = { -it / 2 }, animationSpec = tween(400)) +
+            fadeOut(animationSpec = tween(400))
+
+@OptIn(ExperimentalAnimationApi::class)
+fun defaultPopEnterTransition(): EnterTransition =
+    slideInHorizontally(initialOffsetX = { -it / 2 }, animationSpec = tween(400)) +
+            fadeIn(animationSpec = tween(400))
+
+@OptIn(ExperimentalAnimationApi::class)
+fun defaultPopExitTransition(): ExitTransition =
+    slideOutHorizontally(targetOffsetX = { it / 2 }, animationSpec = tween(400)) +
+            fadeOut(animationSpec = tween(400))
+
 
