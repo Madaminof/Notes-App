@@ -28,15 +28,13 @@ import kotlinx.coroutines.delay
 fun SplashScreen(navController: NavHostController) {
     val systemUiController = rememberSystemUiController()
 
-    // Set status bar and navigation bar color
     LaunchedEffect(Unit) {
         systemUiController.setStatusBarColor(
             color = BrandColor,
-            darkIcons = false // false: oq ikonlar, chunki fon to'q rang
+            darkIcons = false
         )
     }
 
-    // 2 sekund kutib navigatsiya qilish
     LaunchedEffect(Unit) {
         delay(2000)
         navController.navigate("home") {
@@ -64,7 +62,7 @@ fun SplashScreen(navController: NavHostController) {
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "NOTES APP",
+                text = "MyNotes",
                 style = MaterialTheme.typography.headlineLarge.copy(
                     color = Color.White,
                     fontWeight = FontWeight.Bold

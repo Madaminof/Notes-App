@@ -47,6 +47,8 @@ object Routes {
     const val ABOUT = "about"
     const val LOGOUT = "logout"
     const val EDIT_PROFILE = "profile_edit"
+    const val TELEGRAM_KANAL = "tg_kanal"
+
 
 }
 
@@ -137,6 +139,7 @@ fun AppNavGraph(
         composable(Routes.REMINDERS) {
             RemindersScreen(navController = navController)
         }
+
 
         composable(Routes.EDIT_PROFILE) {
             ProfileEditScreen(

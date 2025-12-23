@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Notes</string>
+    <string name="app_name">MyNotes</string>
 
     <string name="Bosh_sahifa">Bosh sahifa</string>
     <string name="Calendar">Calendar</string>
@@ -15,6 +15,11 @@
     <string name="Menu">Menu</string>
     <string name="Notifications">Notifications</string>
     <string name="Search">Search</string>
+
+    // Dialogs
+    <string name="confirmText">Ha</string>
+    <string name="dismissText">Yo\'q</string>
+
 
 
 

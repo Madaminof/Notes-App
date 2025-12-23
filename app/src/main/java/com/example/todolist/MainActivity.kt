@@ -20,8 +20,6 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val settingsViewModel: SettingsViewModel = hiltViewModel()
-
-            // Theme qo‘llaymiz
             TodoListTheme {
                 val navController = rememberNavController()
 

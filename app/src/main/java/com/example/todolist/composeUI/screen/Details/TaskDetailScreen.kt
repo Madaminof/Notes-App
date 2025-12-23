@@ -1,23 +1,26 @@
 package com.example.todolist.composeUI.screen.Details
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -41,6 +44,7 @@ import java.util.Date
 import java.util.Locale
 
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskDetailScreen(
@@ -90,16 +94,11 @@ fun TaskDetailScreen(
                             tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
-                    IconButton(onClick = {
-                        viewModel.deleteTask(task)
-                        navController.popBackStack()
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = "O‘chirish",
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
+                    DeleteTaskButton(
+                        task = task,
+                        viewModel = viewModel,
+                        navController = navController
+                    )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = BrandColor
@@ -109,61 +108,80 @@ fun TaskDetailScreen(
         containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
 
-        Surface(
-            shape = RoundedCornerShape(16.dp),
-            tonalElevation = 3.dp,
-            shadowElevation = 2.dp,
-            color = MaterialTheme.colorScheme.background,
+        BoxWithConstraints( // 📌 ekran hajmiga qarab moslashadi
             modifier = Modifier
                 .padding(padding)
-                .padding(horizontal = 16.dp, vertical = 12.dp)
                 .fillMaxSize()
         ) {
-            Column(
+            LazyColumn( // 📌 scroll bilan professional usul
                 modifier = Modifier
-                    .padding(20.dp)
-                    .verticalScroll(rememberScrollState()),
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .imePadding(), // klaviatura ochilganda scroll qiladi
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text(
-                    text = task.title,
-                    style = MaterialTheme.typography.headlineSmall.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                )
-
-                if (task.description.isNotBlank()) {
-                    Text(
-                        text = task.description,
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            lineHeight = 22.sp
+                item {
+                    Card(
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surface
                         ),
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 4.dp
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(20.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            // Title
+                            Text(
+                                text = task.title,
+                                style = MaterialTheme.typography.headlineSmall.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            )
 
-                Divider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))
+                            // Description
+                            if (task.description.isNotBlank()) {
+                                Text(
+                                    text = task.description,
+                                    style = MaterialTheme.typography.bodyLarge.copy(
+                                        lineHeight = 22.sp
+                                    ),
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
 
-                Text(
-                    text = "📅 Yaratilgan sana: ${formatDate(task.date)}",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                )
+                            Divider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))
 
-                if (task.isEdited) {
-                    Text(
-                        text = "✏️ Ushbu vazifa tahrirlangan",
-                        style = MaterialTheme.typography.labelMedium.copy(
-                            fontWeight = FontWeight.Medium,
-                            color = orange // oldingi: Color(0xFFF57C00)
-                        )
-                    )
+                            // Metadata
+                            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                                Text(
+                                    text = "📅 Yaratilgan sana: ${formatDate(task.date)}",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                                )
+
+                                if (task.isEdited) {
+                                    Text(
+                                        text = "✏️ Ushbu vazifa tahrirlangan",
+                                        style = MaterialTheme.typography.labelMedium.copy(
+                                            fontWeight = FontWeight.Medium,
+                                            color = orange
+                                        ),
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 }
+
 
 fun formatDate(timestamp: Long): String {
     val sdf = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())

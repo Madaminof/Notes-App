@@ -2,6 +2,7 @@ package com.example.todolist.composeUI.screen.home
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,10 +39,6 @@ import com.example.todolist.ui.theme.orange
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-
-
-
-
 
 
 @Composable
@@ -85,7 +82,12 @@ fun TaskCard(
 
     Surface(
         modifier = modifier
-            .clickable { onClick() },
+            .clickable(
+                indication = null, // 📌 ripple ko‘rinmasin
+                interactionSource = remember { MutableInteractionSource() }
+            ) {
+                onClick()
+            },
         shape = RoundedCornerShape(16.dp),
         color = backgroundColor,
         tonalElevation = 2.dp,

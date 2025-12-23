@@ -1,5 +1,7 @@
 package com.example.todolist.composeUI.screen.home.components
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -9,11 +11,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
@@ -30,6 +32,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -105,9 +108,11 @@ fun DrawerMenu(
 
         DrawerItem("Sozlamalar", Icons.Default.Settings, Routes.SETTINGS, navController, onItemClick)
         DrawerItem("Ilova haqida", Icons.Default.Info, Routes.ABOUT, navController, onItemClick)
-        DrawerItem("Chiqish", Icons.Default.ExitToApp, Routes.LOGOUT, navController, onItemClick)
+        DrawerItem("Telegram Sahifamiz", Icons.Default.Send, Routes.TELEGRAM_KANAL, navController, onItemClick)
+
     }
 }
+
 
 @Composable
 fun DrawerItem(
@@ -117,6 +122,7 @@ fun DrawerItem(
     navController: NavController,
     onClick: () -> Unit
 ) {
+    val context = LocalContext.current
     val currentRoute = navController.currentBackStackEntry?.destination?.route
     val selected = currentRoute == route
 
@@ -139,10 +145,18 @@ fun DrawerItem(
         },
         selected = selected,
         onClick = {
-            navController.navigate(route) {
-                popUpTo(navController.graph.startDestinationId) { saveState = true }
-                launchSingleTop = true
-                restoreState = true
+            if (route == Routes.TELEGRAM_KANAL) {
+                // 🔹 Telegram kanalga yo‘naltirish
+                val telegramUrl = "https://t.me/android_notes_developer"
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(telegramUrl))
+                context.startActivity(intent)
+            } else {
+                // Oddiy navigatsiya
+                navController.navigate(route) {
+                    popUpTo(navController.graph.startDestinationId) { saveState = true }
+                    launchSingleTop = true
+                    restoreState = true
+                }
             }
             onClick()
         },
@@ -155,3 +169,4 @@ fun DrawerItem(
         )
     )
 }
+

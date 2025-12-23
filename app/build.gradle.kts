@@ -2,12 +2,11 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id ("dagger.hilt.android.plugin") // 💡 Hilt plugin
+    id ("dagger.hilt.android.plugin")
     id ("kotlin-kapt")
 
 
 }
-
 android {
     namespace = "com.example.todolist"
     compileSdk = 35
@@ -22,6 +21,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+
 
     buildTypes {
         release {
@@ -114,6 +114,7 @@ dependencies {
 
     implementation ("androidx.navigation:navigation-compose:2.7.7")
     implementation("com.google.accompanist:accompanist-navigation-animation:0.34.0")
+    
 
 
 

@@ -142,7 +142,7 @@ fun HomeScreen(
                 LaunchedEffect(filteredList) {
                     animatedItems.clear()
                     filteredList.forEachIndexed { index, task ->
-                        delay(index * 80L) // har bir itemni chiqish oralig‘i 100ms
+                        delay(index * 50L) // har bir itemni chiqish oralig‘i 100ms
                         animatedItems.add(task.id)
                     }
                 }
@@ -216,7 +216,7 @@ fun LargeTopAppBarWithSearch(
         TopAppBar(
             title = {
                 Text(
-                    text = "Notes",
+                    text = "MyNotes",
                     style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
                     color = colorScheme.onPrimary
                 )

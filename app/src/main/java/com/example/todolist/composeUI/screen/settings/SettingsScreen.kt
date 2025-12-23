@@ -5,11 +5,13 @@ package com.example.todolist.composeUI.screen.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -101,17 +103,25 @@ fun SettingsScreen(
                 navController.navigate("profile_edit")
             }
 
-            DangerItem(
-                icon = Icons.Default.Delete,
-                text = "Barcha topshiriqlarni o‘chirish",
-                onClick = { showClearDialog.value = true }
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp) // 🔹 orasini ochish
+            ) {
+                DangerItem(
+                    icon = Icons.Default.Delete,
+                    text = "O‘chirish",
+                    onClick = { showClearDialog.value = true },
+                    modifier = Modifier.weight(1f) // 🔹 50% joy egallaydi
+                )
 
-            DangerItem(
-                icon = Icons.Default.Logout,
-                text = "Chiqish",
-                onClick = { showLogoutDialog.value = true }
-            )
+                DangerItem(
+                    icon = Icons.Default.Logout,
+                    text = "Chiqish",
+                    onClick = { showLogoutDialog.value = true },
+                    modifier = Modifier.weight(1f) // 🔹 50% joy egallaydi
+                )
+            }
+
 
             Spacer(modifier = Modifier.weight(1f))
 
@@ -213,7 +223,8 @@ fun ProfileCard(profile: UserProfile, onEdit: () -> Unit) {
 fun DangerItem(
     icon: ImageVector,
     text: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Surface(
         onClick = onClick,
@@ -221,30 +232,36 @@ fun DangerItem(
         color = MaterialTheme.colorScheme.errorContainer,
         tonalElevation = 3.dp,
         shadowElevation = 4.dp,
-        modifier = Modifier
+        modifier = modifier
+            .height(70.dp) // 🔹 balandlikni bir xil qildik
             .fillMaxWidth()
-            .padding(vertical = 6.dp)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(16.dp)
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center // 🔹 markazga joylashtirish
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onErrorContainer
-            )
-            Spacer(modifier = Modifier.width(12.dp))
-            Text(
-                text = text,
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    color = MaterialTheme.colorScheme.onErrorContainer,
-                    fontWeight = FontWeight.SemiBold
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onErrorContainer
                 )
-            )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = MaterialTheme.colorScheme.onErrorContainer,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                )
+            }
         }
     }
 }
+
 
 
 @Composable

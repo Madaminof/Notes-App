@@ -31,8 +31,6 @@
             </intent-filter>
         </activity>
 
-        <!-- ✅ com.example.todolist.composeUI.screen.Reminders.ReminderReceiver ro'yxatga olindi -->
-        <receiver android:name=".composeUI.screen.Reminders.ReminderReceiver" />
 
     </application>
 
